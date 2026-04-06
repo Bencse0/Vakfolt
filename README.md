@@ -1,1 +1,1 @@
-# BlindSpo - The Game
+# BlindSpot - The Game
