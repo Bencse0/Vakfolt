@@ -490,12 +490,6 @@
     let timerInterval = null; // Változó a timer nyomon követéséhez
 
     function init() {
-        let szam = 0;
-        for (let n in db) {
-            szam += 1;
-        }
-        alert(szam);
-        console.log(szam);
         const n = parseInt(document.getElementById('pCount').value);
         if(n < 4 || n > 12) return alert("Kérem, 4 és 12 közötti létszámot adjon meg!");
         const pick = db[Math.floor(Math.random() * db.length)];
