@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VAKFOLT - Dual-Meta Protokoll</title>
+    <title>BLINDSPOT - Dual-Meta Protokoll</title>
     <style>
         /* A kritikus javítás: minden elem szélessége tartalmazza a keretet is */
         * { box-sizing: border-box; }
@@ -49,8 +49,17 @@
             font-weight: bold; 
             text-transform: uppercase; 
             margin-top: 15px; 
+            transition: all 0.3s ease;
         }
-        button:hover { background: #1a1a1a; border-color: #555; }
+        button:hover:not(.disabled) { background: #1a1a1a; border-color: #555; }
+        
+        /* Új stílus a letiltott gombhoz */
+        button.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+            background: #050505;
+        }
 
         input[type="number"] {
             width: 100%;
@@ -120,7 +129,6 @@
     </div>
 
 <script>
-    // Az adatbázis és a logika maradt a régi
     const db = [
         ["Instagram", "TikTok", ["SOCIAL MEDIA", "MOBIL"]],
         ["Pizza", "Gyros", ["GYORSÉTEL", "MELEG"]],
@@ -319,6 +327,7 @@
     ];
 
     let players = [], cur = 0;
+    let timerInterval = null; // Változó a timer nyomon követéséhez
 
     function init() {
         const n = parseInt(document.getElementById('pCount').value);
@@ -343,6 +352,9 @@
         document.getElementById('file').classList.add('hidden');
         document.getElementById('btnShow').classList.remove('hidden');
         document.getElementById('btnNext').classList.add('hidden');
+        
+        // Ha maradt volna aktív timer, töröljük
+        if (timerInterval) clearInterval(timerInterval);
     }
 
     function reveal() {
@@ -350,6 +362,7 @@
         document.getElementById('rName').innerText = p.n;
         document.getElementById('rName').className = "role-val " + p.c;
         document.getElementById('mDesc').innerText = p.m;
+        
         if(p.n === 'FANTOM') {
             document.getElementById('normal-word').classList.add('hidden');
             document.getElementById('phantom-meta').classList.remove('hidden');
@@ -359,9 +372,29 @@
             document.getElementById('phantom-meta').classList.add('hidden');
             document.getElementById('sWord').innerText = p.w;
         }
+        
         document.getElementById('file').classList.remove('hidden');
         document.getElementById('btnShow').classList.add('hidden');
-        document.getElementById('btnNext').classList.remove('hidden');
+        
+        // Gomb logikája
+        const btnNext = document.getElementById('btnNext');
+        btnNext.classList.remove('hidden');
+        btnNext.classList.add('disabled'); // Gomb letiltása
+        
+        let timeLeft = 7;
+        btnNext.innerText = `AKTA ZÁRÁSA ÉS TOVÁBB (${timeLeft} mp)`;
+
+        // Visszaszámlálás indítása
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            if (timeLeft > 0) {
+                btnNext.innerText = `AKTA ZÁRÁSA ÉS TOVÁBB (${timeLeft} mp)`;
+            } else {
+                clearInterval(timerInterval);
+                btnNext.classList.remove('disabled'); // Gomb aktiválása
+                btnNext.innerText = `AKTA ZÁRÁSA ÉS TOVÁBB`;
+            }
+        }, 1000);
     }
 
     function next() {
